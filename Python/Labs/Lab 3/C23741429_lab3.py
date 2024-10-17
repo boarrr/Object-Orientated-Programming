@@ -61,9 +61,14 @@
 
 class Game:
     """The Game class interacts with the other objects to facilitate game
-    play."""
+    play. It handles the main game loop, user input, and interactions with 
+    the crime scene and characters."""
 
     def __init__(self):
+        """Initializes the Game instance with game state attributes such as 
+        running, game_started, and characters_interacted. It also sets up the 
+        crime scene and character objects (suspect and witness)."""
+        
         super().__init__()
 
         self.running = True
@@ -81,7 +86,12 @@ class Game:
                                                           "dark clothing.")
 
     def inspect_door(self, door) -> None:
-        # Handle door options
+        """Handles door options based on user input.
+        
+        Args:
+            door: The door number selected by the user (1, 2, or 3).
+        """
+
         if door == 1:
             print("You open the Front Door. It's locked, and it seems it can only be opened from outside.")
         elif door == 2:
@@ -93,8 +103,10 @@ class Game:
             # Handle invalid input
             print("Invalid choice. Please choose a valid door number (1, 2, or 3).")
 
-
     def run(self):
+        """Runs the main game loop. Displays the welcome message and waits 
+        for user input to start or quit the game."""
+
         print("Welcome to 'The Poirot Mystery'")
         print("You are about to embark on a thrilling adventure as a detective.")
         print("Your expertise is needed to solve a complex case and unveil "
@@ -104,6 +116,10 @@ class Game:
             self.update()
 
     def update(self):
+        """Handles the game state and user input during the game loop. It 
+        updates the game based on whether the player has started the game or 
+        is in the process of interacting with the environment."""
+
         if not self.game_started:
             player_input = input("Press 'q' to quit or 's' to start: ")
             if player_input.lower() == "q":
@@ -112,11 +128,6 @@ class Game:
                 self.game_started = True
                 self.start_game()
         else:
-            # this changed a little compared to the previous version. We
-            # exchanged the investigate i for i=interact in order to speak
-            # to our characters. We also included a general option to check
-            # on doors.
-
             player_input = input("Press 'q' to quit, 'c' to continue, "
                                  "'i' to interact, 'e' to examine clues, "
                                  "'r' to review your clues, "
@@ -139,6 +150,9 @@ class Game:
                 self.choose_door()
 
     def start_game(self):
+        """Starts the game and sets up the initial scenario where the player 
+        is introduced to the mystery."""
+
         player_name = input("Enter your detective's name: ")
         print(f"Welcome, Detective {player_name}!")
         print("You find yourself in the opulent drawing room of a grand "
@@ -149,10 +163,9 @@ class Game:
         print("Put your detective skills to the test and unveil the truth!")
 
     def interact_with_characters(self):
-        """The interact_with_characters method within the Game class
-        demonstrates the interaction with characters, where each
-        character's dialogue and unique actions (e.g., providing an alibi,
-        sharing an observation) are displayed. """
+        """Handles interaction with both the suspect and witness. Displays
+        dialogue and unique actions for both characters, and adds clues to 
+        the crime scene based on interaction."""
 
         print("\nYou find two people to talk with, and you ask them about the necklace.\n")
         print(self.suspect.interact())  # Print the interaction with the suspect
@@ -161,6 +174,9 @@ class Game:
         self.crime_scene.add_clue('A suspicious figure in dark clothing')
 
     def examine_clues(self):
+        """Allows the player to examine the clues at the crime scene. If the 
+        crime scene hasn't been examined yet, it adds new clues to the scene."""
+
         if not self.crime_scene.investigated:
             print("\nYou decide to examine the clues at the crime scene.")
             print("You find a torn piece of fabric near the window.")
@@ -170,12 +186,9 @@ class Game:
             print("\nYou've already examined the crime scene clues.")
 
     def choose_door(self):
-        """This method handles the door examination option. User input is
-        being handled. The user can make 3 choices: door 1 leads to the
-        front door, door 2 leads to the library and door 3 leads to the
-        kitchen. Wrong user input is being handled via print outs for error
-        handling."""
-        
+        """Handles door selection and provides different scenarios based on 
+        the door choice (1, 2, or 3)."""
+
         print("\nYou stand in front of three doors. Which one would you like to choose?")
         print("1: The Front Door\n2: The Library\n3: The Kitchen\n")
 
@@ -184,11 +197,16 @@ class Game:
 
         self.inspect_door(door_choice)
 
-
     def continue_game(self):
+        """Prints a message to indicate the player is continuing their 
+        investigation."""
+
         print("You continue your investigation, determined to solve the mystery...")
 
     def end_game(self):
+        """Ends the game when all clues are found and prints a winning 
+        message."""
+
         print("\nYou were able to collect all the clues!")
         print("\nYou realized that Mr. Smith killed the Lady of the House with a knife from the kitchen, and climbed out the window to escape!")
         print("\nCongratulations!")
@@ -197,58 +215,85 @@ class Game:
 
 
 class CrimeScene(Game):
+    """Represents a crime scene where clues are gathered. It manages the
+    location of the crime scene and tracks clues found during the game."""
+
     def __init__(self, location):
+        """Initializes the CrimeScene with a location and an empty list of 
+        clues. It also tracks whether the scene has been investigated.
+        
+        Args:
+            location: The location of the crime scene.
+        """
         self.location = location
         self.__clues = []
         self.__investigated = False
 
     @property
     def investigated(self):
+        """Gets the investigated status of the crime scene."""
         return self.__investigated
 
     @investigated.setter
     def investigated(self, value):
+        """Sets the investigated status of the crime scene. Ensures that 
+        only boolean values can be set.
+        
+        Args:
+            value: The new investigated status.
+        """
         if isinstance(value, bool):
             self.__investigated = value
         else:
             print("investigated is expected to be a boolean.")
 
     def add_clue(self, clue):
-        """This method adds clues to the crime scene investigation."""
+        """Adds a clue to the crime scene.
+        
+        Args:
+            clue: The clue to be added to the crime scene.
+        """
         self.__clues.append(clue)
 
     def review_clues(self):
-        """At the moment there are no checks on who can see the clues. We
-        might need some further protection here."""
-
-        if (len(self.__clues) == 3):
+        """Allows the player to review the clues found at the crime scene. 
+        If three clues are found, the game ends.
+        
+        Returns:
+            list: The list of clues found at the crime scene.
+        """
+        if len(self.__clues) == 3:
             super().end_game()
         else:
             return self.__clues
 
 
 class Character:
-    """ The Character class serves as the base class, providing common
+    """The Character class serves as the base class, providing common
     attributes and methods for characters. The Suspect and Witness classes
     are subclasses that inherit from Character and introduce their unique
-    attributes and methods. """
+    attributes and methods."""
 
     def __init__(self, name, dialogue):
+        """Initializes the character with a name and a dialogue.
+        
+        Args:
+            name: The name of the character.
+            dialogue: The dialogue the character will say during interaction.
+        """
         self._name = name
         self._dialogue = dialogue
         self._interacted = False
 
-    # if it is not of benefit for the design of the system
-    # you do not need to explicitely provide getter and setter
-    # methods. Instead, the behavior methods might be sufficient,
-    # as I have chosen in this case.
     def interact(self):
+        """Handles the interaction with the character, displaying their 
+        dialogue. If the character has already interacted, a different 
+        response is shown.
+        
+        Returns:
+            string: The interaction dialogue of the character.
+        """
         if not self.has_interacted():
-            # notice how the interaction variable is created inside the
-            # scope of the if statement. This should be new to you as C
-            # experts. C does not allow for such a declaration. If you try
-            # to declare the variable outside of the if-else block, if won't
-            # be read.
             interaction = f"{self._name}: {self._dialogue}"
             self._interacted = True
         else:
@@ -257,20 +302,37 @@ class Character:
         return interaction
 
     def has_interacted(self):
+        """Checks whether the character has interacted already.
+        
+        Returns:
+            bool: True if the character has interacted, False otherwise.
+        """
         return self._interacted
 
 
 class Suspect(Character):
-    """This is a special type of character. This is the suspect in our crime
-    investigation."""
+    """Represents a suspect in the crime investigation, a specific type of 
+    character that has an alibi and a confirmation of that alibi."""
 
     def __init__(self, name, alibi, confirmation):
-        # Call the parent class constructor with a name and a placeholder dialogue
+        """Initializes the suspect with a name, an alibi, and confirmation of the alibi.
+        
+        Args:
+            name: The name of the suspect.
+            alibi: The suspect's alibi.
+            confirmation: The confirmation of the alibi.
+        """
         super().__init__(name, "I don't have anything to say to you.")
         self.alibi = alibi
         self.confirmation = confirmation
 
     def interact(self):
+        """Overrides the interact method to provide the suspect's alibi and 
+        confirmation if they haven't interacted yet.
+        
+        Returns:
+            string: The interaction dialogue of the suspect.
+        """
         if not self.has_interacted():
             interaction = f"{self._name}: I was {self.alibi}. {self.confirmation}"
             self._interacted = True
@@ -279,18 +341,32 @@ class Suspect(Character):
 
         return interaction
 
+
 class Witness(Character):
-    """This class is the witness. This person has either seen or heard
-    something to do with the crime."""
-    
+    """Represents a witness in the crime investigation, a specific type of 
+    character that has witnessed something related to the crime."""
+
     def __init__(self, name, witness, suspect):
+        """Initializes the witness with a name, witness statement, and a 
+        suspect they saw.
+        
+        Args:
+            name: The name of the witness.
+            witness: The witness's statement about what they saw.
+            suspect: The suspect they observed.
+        """
         super().__init__(name, "I'm scared!")
         self.name = name
         self.witness = witness
         self.suspect = suspect
 
-
     def interact(self):
+        """Overrides the interact method to provide the witness's statement 
+        about what they saw.
+        
+        Returns:
+            string: The interaction dialogue of the witness.
+        """
         if not self.has_interacted():
             interaction = f"{self._name}: {self.witness}. It was a {self.suspect}\n"
             self._interacted = True
@@ -298,6 +374,7 @@ class Witness(Character):
             interaction = f"{self._name}: Please catch him!\n"
 
         return interaction
+
 
 if __name__ == "__main__":
     game = Game()

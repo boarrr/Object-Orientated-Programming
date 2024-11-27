@@ -12,6 +12,7 @@
 # The project also demonstrates the use of classes, objects, and methods in Python
 
 import random
+from pathlib import Path
 from abc import ABC, abstractmethod
 
 
@@ -29,9 +30,29 @@ class Game:
         self.clues = []  # List to store collected clues
 
     def start(self):
-        """Start the game by setting is_running to True and creating the instances of the levels
-        also prompts the user with a welcome message, and for the user to input their name."""
+        """
+        Checks for existing save files and loads the game if found, otherwise starts a new game.
+        Sets `is_running` to True and creates the instances of the levels.
+        Prompts the user with a welcome message and their name if starting a new game.
+        """
 
+        # Default save file location
+        save_path = Path(__file__).parent / "save.txt"
+
+        # Does the save file exist?
+        if save_path.exists():
+            # Prompt user to load the game
+            while True:
+                user_load = input("Save game found! Would you like to load? (yes/no): ").strip().lower()
+                if user_load in ["yes", "no"]:
+                    break
+                print("Invalid input. Please enter 'yes' or 'no'.")
+
+            if user_load == "yes":
+                self.load_game(save_path)
+                return
+
+        # New game setup
         print("Welcome to the mystery adventure game created by Null Pointer!\n")
         print("You need to gather clues throughout the adventure!")
         print("The clues are used to solve the final puzzle and win the game!")
@@ -43,6 +64,7 @@ class Game:
 
         self.is_running = True
         self.game_loop()
+
 
     def game_loop(self):
         """The main game loop that runs while the game is running
@@ -60,8 +82,8 @@ class Game:
                 print("\nWhat would you like to do?")
                 print("1. Interact with the NPCs")
                 print("2. Review your clues")
-                print("3. Solve the puzzle")
-                print("4. Look for clues")
+                print("3. Look for clues")
+                print("4. Solve the puzzle")
                 print("5. Quit the game")
 
                 # Get the user's choice
@@ -72,22 +94,31 @@ class Game:
                 elif choice == "2":
                     self.review_clues()
                 elif choice == "3":
-                    if current_level.solve_puzzle():
-                        # If the puzzle is solved without searching the room, add the clue to the list
-                        if not current_level.clue in self.clues:
-                            self.clues.append(current_level.clue)
-                        break  # Exit the input loop to move to the next level
-                elif choice == "4":
+                    # if the room has not been searched, add the clue to the list and save the game
                     if not current_level.searched:
                         self.clues.append(current_level.clue)
+                        self.save_game()
+                    # Search the room for clues
                     current_level.search_room()
+                elif choice == "4":
+                    if current_level.solve_puzzle():
+                        # If the puzzle is solved without searching the room, add the rooms clue to the list
+                        if not current_level.clue in self.clues:
+                            self.clues.append(current_level.clue)
+                        
+                        # Move to the next level
+                        self._current_level += 1
+
+                        # Save the game
+                        self.save_game()
+                        break  # Exit the input loop to move to the next level
                 elif choice == "5":
                     self.quit_game()
-                    return
+                    break
                 else:
                     print("Invalid choice. Please try again.")
 
-            self._current_level += 1
+            
 
         if self.is_running: # Check if the game is still running, this means the player has completed all levels
             print(f"\nCongratulations {self._player_name}! You completed the game.")
@@ -105,9 +136,53 @@ class Game:
             for clue in self.clues:
                 print(f"- {clue}")
 
+    def save_game(self):
+        """Saves the current game state to a file. Data saved includes the current level, player name, and clues collected"""
+
+        save_path = Path(__file__).parent / "save.txt"
+
+        # Write the game data to a file, creating a new file if it does not exist
+        with open(save_path, "w") as file:
+            # Store the player name, current level, and clues, join is used to convert the list of clues to a string
+            file.write(f"{self._player_name}\n")
+            file.write(f"{self._current_level}\n")
+            file.write("\n".join(self.clues))
+    
+    def load_game(self, file_path):
+        """Loads a saved game from a file, as long as that file exists"""
+
+        # Default save file location
+        save_path = Path(__file__).parent / "save.txt"
+
+        # Redundant error checking
+        if not save_path.exists():
+            print("No save file found.")
+            return
+    
+        # Read the game data from the file
+        with open(save_path, "r") as file:
+           file_data = file.readlines()
+
+        # Set the player name, current level, and clues from the file data
+        # Strip is used to ensure no whitespace from the start and end of the string
+        self._player_name = file_data[0].strip()
+        self._current_level = int(file_data[1].strip())
+
+        # All remaining lines are clues, so iterate through them and add them to the clues list
+        self.clues = [line.strip() for line in file_data[2:]]
+
+        print(f"\nGame loaded successfully! Welcome back {self._player_name}!")
+        print(f"\nYou are currently on level {self._current_level + 1}: {self.levels[self._current_level].name}")
+        print("You have collected the following clues:")
+        for clue in self.clues:
+            print(f"- {clue}")
+        
+        self.is_running = True
+        self.game_loop()
+
     def quit_game(self):
         """Quit the game"""
-        print("Thanks for playing! Goodbye.")
+        print("\nThanks for playing! Goodbye.")
         self.is_running = False
 
 # Base class for all NPCs
@@ -228,6 +303,7 @@ class MansionLevel(Level):
             print("Incorrect word, try again.")
             return False
 
+# Main method to run the game
 if __name__ == "__main__":
     # Create a game instance
     game = Game()

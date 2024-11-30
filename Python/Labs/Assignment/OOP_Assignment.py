@@ -42,9 +42,6 @@ class Game:
         ] 
         self._current_level = 0 # The current level the player is on
         self._player_name = None
-
-        self.clues = []  # List to store collected clues
-
         self.inventory = []  # List to store items the player has collected
         self.witness_statements = []  # List to store witness statements
         self.suspect_motives = []  # List to store suspects

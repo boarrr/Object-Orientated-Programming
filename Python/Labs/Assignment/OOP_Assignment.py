@@ -27,8 +27,10 @@ from abc import ABC, abstractmethod
 
 class Game:
     def __init__(self):
-        """Set up the game by creating the needed variables, this method is called when the game is created
-        Also prepares a way of storing the current level of the user and the clues they have found"""
+        """
+        Set up the game by creating the needed variables, this method is called when the game is created
+        Also prepares a way of storing the current level of the user and the clues they have found
+        """
 
         self.is_running = False
         self.levels = [ # List of levels in the game
@@ -84,8 +86,10 @@ class Game:
 
 
     def game_loop(self):
-        """The main game loop that runs while the game is running
-        This loop facilitates user input and choices throughout the game"""
+        """
+        The main game loop that runs while the game is running
+        This loop facilitates user input and choices throughout the game
+        """
 
         # Run while the game is running and the current level is less than the total number of levels
         while self.is_running and self._current_level < len(self.levels):
@@ -145,7 +149,9 @@ class Game:
             print("\nThank you for playing!")
 
     def view_level_clues(self):
-        """If the level has been searched, show the clue for the level here"""
+        """
+        If the level has been searched, show the clue for the level here
+        """
 
         # Get the current level from the list of levels
         current_level = self.levels[self._current_level]
@@ -158,7 +164,9 @@ class Game:
             print("\nYou have not found the clue for this level yet.")
         
     def view_inventory(self):
-        """View the current items in the player's inventory"""
+        """
+        View the current items in the player's inventory
+        """
 
         # Check if the inventory is empty
         if not self.inventory:
@@ -169,7 +177,9 @@ class Game:
                 print(f"- {item}")
 
     def add_to_inventory(self, item):
-        """Add an item to the player's inventory"""
+        """
+        Add an item to the player's inventory
+        """
 
         # Check if the item is already in the inventory
         if item in self.inventory:
@@ -179,7 +189,9 @@ class Game:
             print(f"{item} has been added to your inventory.")
 
     def view_witness_statements(self):
-        """ View the witness statements collected so far"""
+        """
+        View the witness statements collected so far
+        """
 
         if not self.witness_statements:
             print("\nYou have not collected any witness statements yet.")
@@ -189,7 +201,9 @@ class Game:
                 print(f"- {statement}")
     
     def view_suspect_motives(self):
-        """View the motives of the suspects in the game"""
+        """
+        View the motives of the suspects in the game
+        """
 
         if not self.suspect_motives:
             print("\nYou have not collected any suspect motives yet.")
@@ -200,7 +214,9 @@ class Game:
 
 
     def save_game(self):
-        """Saves the current game state to a JSON file."""
+        """
+        Saves the current game state to a JSON file.
+        """
 
         save_path = Path(__file__).parent / "save_game.json"
 
@@ -218,7 +234,9 @@ class Game:
             json.dump(game_state, file, indent=4)
     
     def load_game(self, save_path):
-        """Loads the game state from a JSON file."""
+        """
+        Loads the game state from a JSON file.
+        """
 
         # Check if the save file exists
         if not save_path.exists():
@@ -244,7 +262,9 @@ class Game:
         self.game_loop()
 
     def quit_game(self):
-        """Quit the game"""
+        """
+        Quits the game
+        """
         print("\nThanks for playing! Goodbye.")
         self.is_running = False
 
@@ -256,7 +276,9 @@ class NPC:
         self.dialogue = dialogue
     
     def generate_name(self):
-        """This method generates a random name and prefix for each NPC instance"""
+        """
+        This method generates a random name and prefix for each NPC instance
+        """
 
         prefixes = ["Mr.", "Mrs.", "Miss", "Dr."]
         names = [
@@ -269,7 +291,10 @@ class NPC:
         return f"{random.choice(prefixes)} {random.choice(names)}"
     
     def interact(self):
-        """Allows the player to interact with the NPCs"""
+        """
+        Allows the player to interact with the NPCs
+        """
+
         return f"{self.name} ({self.role}): {self.dialogue}"
 
 # Base class for main game characters
@@ -279,7 +304,10 @@ class Character:
         self.role = role
     
     def introduce(self):
-        """Introduce the character"""
+        """
+        Introduce the character
+        """
+
         return f"{self.role}: {self.name}"
 
 # Subclasses of the Character class
@@ -289,7 +317,10 @@ class Suspect(Character):
         self.motive = motive
     
     def reveal_motive(self):
-        """Reveal the suspect's motive"""
+        """
+        Reveal the suspect's motive
+        """
+
         return f"{self.name}'s motive: {self.motive}"
 
 class Witness(Character):
@@ -298,11 +329,16 @@ class Witness(Character):
         self.statement = statement
     
     def provide_statement(self):
-        """Provide the witness's statement"""
+        """
+        Provide the witness's statement
+        """
+
         return f"{self.name}'s statement: {self.statement}"
-    
-    # Override the __str__ method to return the name of the witness
+
     def __str__(self):
+        """
+        Override the __str__ method to return the name of the witness
+        """
         return self.name
 
 
@@ -316,22 +352,30 @@ class Level(ABC):
 
     @abstractmethod
     def start(self):
-        """Starts the level"""
+        """
+        Starts the level
+        """
         pass
 
     @abstractmethod
     def introduce_npcs(self):
-        """Introduce the NPCs in the level"""
+        """
+        Introduce the NPCs in the level
+        """
         pass
 
     @abstractmethod
     def search_room(self):
-        """Search the room for clues"""
+        """
+        Search the room for clues
+        """
         pass
 
     @abstractmethod
     def solve_puzzle(self):
-        """Attempt to solve the puzzle in the level"""
+        """
+        Attempt to solve the puzzle in the level
+        """
         pass
 
 
@@ -349,7 +393,9 @@ class MansionLevel(Level):
         self.searched = False
 
     def start(self):
-        """Introduces the mansion level"""
+        """
+        Introduces the mansion level
+        """
 
         print(f"\nWelcome to {self.name}!")
         print("You have entered the mansion and find yourself in a grand foyer.")
@@ -357,7 +403,9 @@ class MansionLevel(Level):
         print("Try to find the butler and maid in the room to help you!")
 
     def introduce_npcs(self):
-        """Introduces the maid and butler in the mansion foyer, along with the groundskeeper"""
+        """
+        Introduces the maid and butler in the mansion foyer, along with the groundskeeper
+        """
 
         print("\nIn the foyer you see the following NPCs:")
         for npc in self.npcs:
@@ -397,7 +445,9 @@ class MansionLevel(Level):
         print("\nYou were unable to find that NPC in the room.")
 
     def search_room(self):
-        """Search the mansion foyer for clues"""
+        """
+        Search the mansion foyer for clues
+        """
         if self.searched:
             print("\nYou have already searched the foyer.")
             return
@@ -410,7 +460,9 @@ class MansionLevel(Level):
 
 
     def solve_puzzle(self):
-        """Solve the puzzle in the mansion level to collect the clue"""
+        """
+        Solve the puzzle in the mansion level to collect the clue
+        """
 
         print("\nYou see door with a keypad lock.")
         print("You need to input a word to unlock the door.")
@@ -439,7 +491,9 @@ class StudyLevel(Level):
         self.searched = False  # Indicates if the room has been searched
 
     def start(self):
-        """Introduce the Study level."""
+        """
+        Introduce the Study level.
+        """
 
         print(f"\nWelcome to {self.name}!")
         print(
@@ -450,7 +504,9 @@ class StudyLevel(Level):
         print("A strange puzzle glistens on the chalkboard in the corner.")
 
     def introduce_npcs(self):
-        """Introduce the NPCs in the Study."""
+        """
+        Introduce the NPCs in the Study.
+        """
 
         print("\nIn the Study, you see the following NPCs:")
         for npc in self.npcs:
@@ -467,13 +523,19 @@ class StudyLevel(Level):
             print("\nYou couldn't find that NPC in the room.")
 
     def interact_with_professor(self):
-        """Interact with the Professor NPC."""
+        """
+        Interact with the Professor NPC.
+        """
+
         print("\nProfessor Algebrus: 'This mysterious puzzle appeared on my chalkboard, and I have not been able to solve it.'")
         print("Professor Algebrus: 'Can you help me solve it?'")
 
 
     def interact_with_librarian(self):
-        """Interact with the Librarian NPC."""
+        """
+        Interact with the Librarian NPC.
+        """
+
         print("\nLibrarian Euclidia: 'I don’t have puzzles, but I can share some wisdom.'")
         statment = self.witness.provide_statement()
         print(f"\n{statment}")
@@ -489,7 +551,10 @@ class StudyLevel(Level):
             game.suspect_motives.append(motive)
 
     def search_room(self):
-        """Search the Study for clues."""
+        """
+        Search the Study for clues.
+        """
+
         if self.searched:
             print("\nYou already found the clue for this level.")
             return
@@ -501,7 +566,10 @@ class StudyLevel(Level):
         self.searched = True
 
     def solve_puzzle(self):
-        """Solve the puzzle in the Study level."""
+        """
+        Solve the puzzle in the Study level.
+        """
+
         print("\nThe puzzle is still on the chalkboard: 3x ≡ 1 (mod 7).")
         print("Enter the correct value of x to proceed.")
 
@@ -528,13 +596,19 @@ class KitchenLevel(Level):
         self.searched = False
 
     def start(self):
-        # Introduce the kitchen level
+        """
+        Introduce the kitchen level
+        """
+
         print("\nYou have now entered the kitchen")
         print("Along the counters are lavish ingredients and cooking utensils.")
         print("Inside the kitchen there are the two main chefs of the house, along with all the kitchen staff")
 
     def introduce_npcs(self):
-        # Introduce the NPCs in the kitchen
+        """
+        Introduce the NPCs in the kitchen
+        """
+
         print("\nIn the Kitchen you see the following NPCs:")
         for npc in self.npcs:
             print(f"- {npc.name}, the {npc.role}")
@@ -550,7 +624,9 @@ class KitchenLevel(Level):
         
 
     def search_room(self):
-        """Search the kitchen for clues"""
+        """
+        Search the kitchen for clues
+        """
 
         if self.searched:
             print("\nYou have already searched the kitchen.")
@@ -583,7 +659,9 @@ class KitchenLevel(Level):
             game.suspect_motives.append(motive)
 
     def solve_puzzle(self):
-        """Solve the puzzle in the kitchen level to collect the clue"""
+        """
+        Solve the puzzle in the kitchen level to collect the clue
+        """
 
         # Solve the puzzle to unlock the door
         print("\nYou see a scale attached to the door.")
@@ -621,13 +699,19 @@ class CellarLevel(Level):
         self.searched = False
 
     def start(self):
-        """Introduce the cellar level."""
+        """
+        Introduce the cellar level.
+        """
+
         print("\nWelcome to The Cellar!")
         print("The cellar is damp, cold, and cloaked in darkness.")
         print("A Groundskeeper stands near the door, his lantern casting flickering shadows.")
 
     def introduce_npcs(self):
-        """Introduce the NPCs in the Cellar."""
+        """
+        Introduce the NPCs in the Cellar.
+        """
+
         print("\nIn the Cellar, you see:")
         for npc in self.npcs:
             print(f"- {npc.name}, the {npc.role}")
@@ -643,7 +727,10 @@ class CellarLevel(Level):
             print("\nYou decide not to speak to the Groundskeeper.")
 
     def search_room(self):
-        """Search the room for clues."""
+        """
+        Search the room for clues.
+        """
+
         if self.searched:
             print("\nYou have already found the chest.")
         else:
@@ -652,7 +739,10 @@ class CellarLevel(Level):
             self.searched = True
 
     def solve_puzzle(self):
-        """Engage in combat with the Skeleton to obtain the clue."""
+        """
+        Engage in combat with the Skeleton to obtain the clue.
+        """
+
         if not self.searched:
             print("\nYou haven't found the chest yet. Explore the cellar first!")
             return False
@@ -702,7 +792,10 @@ class CellarLevel(Level):
             return True
 
     def move(self, main_move, other_move, main_stats, other_stats):
-        """Perform the chosen move."""
+        """
+        Perform the chosen move.
+        """
+
         if main_move in ["attack", "atk"]:
             self.attack(main_stats, other_move, other_stats)
         elif main_move in ["defend", "def"]:
@@ -713,7 +806,10 @@ class CellarLevel(Level):
             print(f"Invalid move: {main_move}. {main_stats['user']} wastes their turn.")
 
     def attack(self, main_stats, other_move, other_stats):
-        """Handle attack logic."""
+        """
+        Handle attack logic.
+        """
+
         damage = main_stats["damage"] * 2 if main_stats["charge"] else main_stats["damage"]
         main_stats["charge"] = False  # Reset charge after attack
         if other_move in ["defend", "def"]:
@@ -724,13 +820,19 @@ class CellarLevel(Level):
         print(f"{main_stats['user']} deals {damage} damage to {other_stats['user']}.")
 
     def charge(self, main_stats):
-        """Handle charge logic."""
+        """
+        Handle charge logic.
+        """
+
         main_stats["charge"] = not main_stats["charge"]
         status = "charged" if main_stats["charge"] else "uncharged"
         print(f"{main_stats['user']} has {status} their attack.")
 
     def defend(self, main_stats):
-        """Handle defend logic."""
+        """
+        Handle defend logic.
+        """
+
         print(f"{main_stats['user']} takes a defensive stance.")
 
 #Erik Hansen Lopez - Level 5: The Garden
@@ -748,7 +850,10 @@ class GardenLevel(Level):
         self.searched = False  # Track whether the level's puzzle has been solved
 
     def start(self):
-        """Start the Garden level"""
+        """
+        Start the Garden level
+        """
+
         print(f"\nWelcome to the {self.name}!")
         print(
             "You enter the Garden. The room is bright, with vibrant-colored flowers and plants growing everywhere. "
@@ -757,7 +862,10 @@ class GardenLevel(Level):
         )
 
     def introduce_npcs(self):
-        """Introduce the gardener and lobotomist in the garden."""
+        """
+        Introduce the gardener and lobotomist in the garden.
+        """
+
         print("\nIn the Garden, you see the following NPCs:")
         for npc in self.npcs:
             print(f"- {npc.name}, the {npc.role}")
@@ -772,12 +880,18 @@ class GardenLevel(Level):
             print("\nInvalid choice. Please try again.")
 
     def interact_with_gardener(self):
-        """Interact with the gardener NPC"""
+        """
+        Interact with the gardener NPC
+        """
+
         print(f"\n{self.npcs[0].interact()}")
         print("I swear I've seen this plant before, but I can't remember the name.")
 
     def interact_with_lobotomist(self):
-        """Interact with the Lobotomist NPC"""
+        """
+        Interact with the Lobotomist NPC
+        """
+
         print(f"\n{self.npcs[1].interact()}")
         print("The Lobotomist continues: 'The answer might be a poisonous plant. But which one? Something with 'shade,' perhaps?'")
         print("You also learn that Colonel Hawthorne has a motive to commit the crime.")
@@ -789,7 +903,9 @@ class GardenLevel(Level):
         
 
     def solve_puzzle(self):
-        """Solve the puzzle in the Garden level"""
+        """
+        Solve the puzzle in the Garden level
+        """
 
         print("\nThe note reads:")
         print("'I am a plant with dark purple or black berries and a reputation for being highly toxic.'")
@@ -815,7 +931,10 @@ class GardenLevel(Level):
             print("\nHmm, that’s not quite right. Keep thinking!")
 
     def search_room(self):
-        """Search the room for clues."""
+        """
+        Search the room for clues.
+        """
+
         if self.searched:
             print("\nYou have already solved the puzzle and found the clue in this level.")
         else:
@@ -836,14 +955,18 @@ class ObservatoryLevel(Level):
         self.searched = False
 
     def start(self):
-        """Introduces the observatory level"""
+        """
+        Introduces the observatory level
+        """
 
         print(f"Welcome to {self.name}!")
         print("You enter the observatory, a large telescope dominates the middle of the room, star charts cover the walls.")
         print("In the room stands a colonel and professor")
 
     def introduce_npcs(self):
-        """Introduces the colonel and professor in the observatory"""
+        """
+        Introduces the colonel and professor in the observatory
+        """
 
         print("\nIn the observatory you see the following NPCs:")
         for npc in self.npcs:
@@ -862,7 +985,9 @@ class ObservatoryLevel(Level):
         print("\nYou were unable to find that NPC in the room.")
 
     def search_room(self):
-        """Search the observatory for clues"""
+        """
+        Search the observatory for clues
+        """
 
         if self.searched:
             print("\nYou have already searched the observatory.")
@@ -884,7 +1009,9 @@ class ObservatoryLevel(Level):
 
 
     def solve_puzzle(self):
-        """Solve the puzzle in the mansion level to collect the clue"""
+        """
+        Solve the puzzle in the mansion level to collect the clue
+        """
 
         print("\nYou see a lockbox with a constellation on it.")
         print("You need to input the name of the constellation to unlock it.")
@@ -904,6 +1031,9 @@ class FinalLevel(Level):
         self.in_chamber = False
 
     def start(self):
+        """
+        Starts the final level of the game
+        """
         print("\nYou have found a doorway that leads to a hidden chamber.")
         print("The door is locked with a complex mechanism.")
         print("You check your inventory and find the broken key parts you collected.")
@@ -913,6 +1043,9 @@ class FinalLevel(Level):
 
 
     def introduce_npcs(self):
+        """
+        Introduces the final NPC who reveals the murderer
+        """
 
         if not self.in_chamber:
             print("\nYou have not entered the hidden chamber yet.")
@@ -931,6 +1064,9 @@ class FinalLevel(Level):
         print("You realize that he is the mastermind behind the murder")
 
     def search_room(self):
+        """
+        Enters the player into the hidden chamber
+        """
         if self.searched:
             print("You have already searched the hidden chamber")
             return
@@ -939,6 +1075,9 @@ class FinalLevel(Level):
         self.searched = True
 
     def solve_puzzle(self):
+        """
+        Prints the end game message
+        """
         print("\nYou successfully found the truth of the murder in this mansion")
         print("By collecting witness statements and clues, you were able to eliminate possibilities of the suspects")
         print("You arrest Mr. Blackthorn in his hidden chamber for the murder")

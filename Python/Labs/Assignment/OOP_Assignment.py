@@ -842,7 +842,7 @@ class GardenLevel(Level):
         # Set NPCs in the Garden level
         self.npcs = [
             NPC("Gardener", "I've been trying to identify this mysterious plant in the note. Can you help me solve this puzzle?"),
-            NPC("Lobotomist", "If I may, I think the puzzle refers to a poisonous plant. Something with 'shade,' perhaps?")
+            NPC("Herbologist", "If I may, I think the puzzle refers to a poisonous plant. Something with 'shade,' perhaps?")
         ]
         self.witness = Witness("Gardener", "Dr. Steele was with me at the time of the murder.\nAnd look, the footprints in the Nightshade patch are too small for Dr. Steele's foot size.")
         self.suspect = Suspect("Colonel Hawthorne", "The victim has recently threatened to reveal a scandal from Hawthrones past, which would ruin is reputation")
@@ -856,14 +856,14 @@ class GardenLevel(Level):
 
         print(f"\nWelcome to the {self.name}!")
         print(
-            "You enter the Garden. The room is bright, with vibrant-colored flowers and plants growing everywhere. "
-            "Right in the center of the room stands a beautiful fountain where two figures can be spotted. "
+            "You enter the Garden. The room is bright, with vibrant-colored flowers and plants growing everywhere.\n"
+            "Right in the center of the room stands a beautiful fountain where two figures can be spotted.\n"
             "One is staring at a note in confusion, while the other is examining the flowers."
         )
 
     def introduce_npcs(self):
         """
-        Introduce the gardener and lobotomist in the garden.
+        Introduce the gardener and herbologist in the garden.
         """
 
         print("\nIn the Garden, you see the following NPCs:")
@@ -871,11 +871,11 @@ class GardenLevel(Level):
             print(f"- {npc.name}, the {npc.role}")
 
         # Allow the user to interact with these NPCs
-        choice = input("\nWho would you like to speak to? (Gardener / Lobotomist): ").strip().lower()
+        choice = input("\nWho would you like to speak to? (Gardener / Herbologist): ").strip().lower()
         if choice == "gardener":
             self.interact_with_gardener()
-        elif choice == "lobotomist":
-            self.interact_with_lobotomist()
+        elif choice == "herbologist":
+            self.interact_with_herbologist()
         else:
             print("\nInvalid choice. Please try again.")
 
@@ -887,13 +887,13 @@ class GardenLevel(Level):
         print(f"\n{self.npcs[0].interact()}")
         print("I swear I've seen this plant before, but I can't remember the name.")
 
-    def interact_with_lobotomist(self):
+    def interact_with_herbologist(self):
         """
-        Interact with the Lobotomist NPC
+        Interact with the herbologist NPC
         """
 
         print(f"\n{self.npcs[1].interact()}")
-        print("The Lobotomist continues: 'The answer might be a poisonous plant. But which one? Something with 'shade,' perhaps?'")
+        print("The Herbologist continues: 'The answer might be a poisonous plant. But which one? Something with 'shade,' perhaps?'")
         print("You also learn that Colonel Hawthorne has a motive to commit the crime.")
         motive = self.suspect.reveal_motive()
         print(f"{motive}")
@@ -936,11 +936,12 @@ class GardenLevel(Level):
         """
 
         if self.searched:
-            print("\nYou have already solved the puzzle and found the clue in this level.")
+            print("\nYou have already searched the room in this level.")
         else:
             print("\nYou search the garden carefully, noticing a note held by the Gardener.")
             print("Perhaps solving the puzzle on the note will lead to more information.")
-            print("You think about what the Lobotomist said about a poisonous plant.")
+            print("You think about what the Herbologist said about a poisonous plant.")
+            self.searched = True
 
 # Andrew Cotter - Level 6: The Observatory
 class ObservatoryLevel(Level):
@@ -959,7 +960,7 @@ class ObservatoryLevel(Level):
         Introduces the observatory level
         """
 
-        print(f"Welcome to {self.name}!")
+        print(f"\nWelcome to {self.name}!")
         print("You enter the observatory, a large telescope dominates the middle of the room, star charts cover the walls.")
         print("In the room stands a colonel and professor")
 
@@ -1029,6 +1030,8 @@ class FinalLevel(Level):
         super().__init__("The Final Level")
         self.searched = False
         self.in_chamber = False
+        self.has_entered = False
+        self.clue = "Mr. Blackthorn is standing in the chamber!"
 
     def start(self):
         """
@@ -1051,6 +1054,10 @@ class FinalLevel(Level):
             print("\nYou have not entered the hidden chamber yet.")
             return
         
+        if self.has_entered:
+            print("\nNo time to waste! Arrest the suspect!")
+            return
+        
         print("\nYou enter the hidden chamber.")
         time.sleep(1)
         print("In the center of the room, you see a figure standing in the shadows.")
@@ -1062,6 +1069,8 @@ class FinalLevel(Level):
         print("He looks at you with a cold, calculating gaze.")
         time.sleep(1)
         print("You realize that he is the mastermind behind the murder")
+
+        self.has_entered = True
 
     def search_room(self):
         """
